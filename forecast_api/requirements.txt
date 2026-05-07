@@ -1,0 +1,18 @@
+fastapi
+uvicorn[standard]
+pydantic
+aiofiles
+
+# ML / modelling
+xgboost
+scikit-learn
+statsmodels
+prophet
+tensorflow
+pmdarima
+# Data
+numpy
+pandas
+
+# Serialisation
+joblib

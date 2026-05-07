@@ -1,0 +1,17 @@
+# Models (too large for GitHub)
+forecast_api/models/
+
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+.env
+venv/
+env/
+
+# Data
+*.xlsx
+
+# OS
+.DS_Store
+Thumbs.db

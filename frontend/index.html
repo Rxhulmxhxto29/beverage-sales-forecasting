@@ -1,0 +1,392 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>QuickHyre — Beverage Sales Forecasting</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.umd.min.js"></script>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <!-- ── Sidebar ─────────────────────────────────────── -->
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-header">
+      <div class="logo">
+        <span class="logo-icon">📈</span>
+        <span class="logo-text">QuickHyre</span>
+      </div>
+      <button class="sidebar-toggle" id="sidebarToggle" aria-label="Toggle sidebar">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M3 12h18M3 6h18M3 18h18"/>
+        </svg>
+      </button>
+    </div>
+
+    <nav class="sidebar-nav">
+      <button class="nav-item active" data-tab="dashboard">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/>
+          <rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/>
+        </svg>
+        <span>Dashboard</span>
+      </button>
+      <button class="nav-item" data-tab="forecast">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/>
+        </svg>
+        <span>Forecast</span>
+      </button>
+      <button class="nav-item" data-tab="models">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="12" cy="12" r="3"/><path d="M12 1v4M12 19v4M4.22 4.22l2.83 2.83M16.95 16.95l2.83 2.83M1 12h4M19 12h4M4.22 19.78l2.83-2.83M16.95 7.05l2.83-2.83"/>
+        </svg>
+        <span>Models</span>
+      </button>
+      <button class="nav-item" data-tab="live">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/>
+        </svg>
+        <span>Live Forecast</span>
+      </button>
+    </nav>
+
+    <div class="sidebar-footer">
+      <div class="health-badge" id="healthBadge">
+        <span class="health-dot"></span>
+        <span class="health-text">Checking…</span>
+      </div>
+    </div>
+  </aside>
+
+  <!-- ── Main content ──────────────────────────────────── -->
+  <main class="main" id="main">
+
+    <!-- Top bar -->
+    <header class="topbar">
+      <div class="topbar-left">
+        <h1 class="page-title" id="pageTitle">Dashboard</h1>
+        <span class="page-subtitle" id="pageSubtitle">Beverage Sales Forecasting System</span>
+      </div>
+      <div class="topbar-right">
+        <div class="api-status" id="apiStatusBadge">
+          <span class="pulse"></span>
+          <span id="apiStatusText">Connecting…</span>
+        </div>
+      </div>
+    </header>
+
+    <!-- ── TAB: DASHBOARD ──────────────────────────── -->
+    <section class="tab-pane active" id="tab-dashboard">
+      <div class="stats-grid">
+        <div class="stat-card" id="statStates">
+          <div class="stat-icon stat-icon--blue">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/>
+              <circle cx="12" cy="10" r="3"/>
+            </svg>
+          </div>
+          <div class="stat-body">
+            <span class="stat-value" id="statStatesValue">—</span>
+            <span class="stat-label">States Covered</span>
+          </div>
+        </div>
+        <div class="stat-card" id="statModels">
+          <div class="stat-icon stat-icon--purple">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="12" cy="12" r="3"/><path d="M12 1v4M12 19v4M4.22 4.22l2.83 2.83M16.95 16.95l2.83 2.83M1 12h4M19 12h4"/>
+            </svg>
+          </div>
+          <div class="stat-body">
+            <span class="stat-value" id="statModelsValue">—</span>
+            <span class="stat-label">Models Loaded</span>
+          </div>
+        </div>
+        <div class="stat-card" id="statHorizon">
+          <div class="stat-icon stat-icon--green">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/>
+              <line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/>
+            </svg>
+          </div>
+          <div class="stat-body">
+            <span class="stat-value">8 weeks</span>
+            <span class="stat-label">Forecast Horizon</span>
+          </div>
+        </div>
+        <div class="stat-card" id="statAlgorithms">
+          <div class="stat-icon stat-icon--orange">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/>
+            </svg>
+          </div>
+          <div class="stat-body">
+            <span class="stat-label" style="margin-bottom:6px;">Algorithms Used</span>
+            <div class="algo-chips">
+              <span class="algo-chip chip--XGBoost">XGBoost</span>
+              <span class="algo-chip chip--ARIMA">ARIMA</span>
+              <span class="algo-chip chip--Prophet">Prophet</span>
+              <span class="algo-chip chip--LSTM">LSTM</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- States grid -->
+      <div class="section-header">
+        <h2 class="section-title">All States</h2>
+        <div class="search-box">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/>
+          </svg>
+          <input type="text" id="stateSearch" placeholder="Search state…" autocomplete="off" />
+        </div>
+      </div>
+      <div class="states-grid" id="statesGrid">
+        <div class="skeleton-grid">
+          <div class="skeleton"></div><div class="skeleton"></div>
+          <div class="skeleton"></div><div class="skeleton"></div>
+          <div class="skeleton"></div><div class="skeleton"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── TAB: FORECAST ──────────────────────────── -->
+    <section class="tab-pane" id="tab-forecast">
+      <div class="forecast-controls">
+        <div class="select-wrapper">
+          <label for="forecastState">Select State</label>
+          <div class="custom-select">
+            <select id="forecastState">
+              <option value="">— choose a state —</option>
+            </select>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <polyline points="6 9 12 15 18 9"/>
+            </svg>
+          </div>
+        </div>
+        <button class="btn btn--primary" id="runForecastBtn" disabled>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <polygon points="5 3 19 12 5 21 5 3"/>
+          </svg>
+          Run Forecast
+        </button>
+      </div>
+
+      <!-- Results (hidden until data loaded) -->
+      <div class="forecast-results hidden" id="forecastResults">
+        <div class="result-header">
+          <div class="result-title-block">
+            <h2 class="result-state" id="resultState">—</h2>
+            <span class="model-badge" id="resultModelBadge">—</span>
+          </div>
+          <div class="mape-chip" data-tooltip="Mean Absolute Percentage Error — how far off forecasts are on average. Lower is better. Under 5% is considered excellent.">
+            <span class="mape-label">MAPE <span class="info-icon">?</span></span>
+            <span class="mape-value" id="resultMape">—</span>
+          </div>
+        </div>
+
+        <!-- Chart -->
+        <div class="chart-card">
+          <div class="chart-card-header">
+            <span>8-Week Sales Forecast</span>
+            <div class="chart-legend">
+              <span class="legend-item legend-item--forecast">Forecast</span>
+            </div>
+          </div>
+          <div class="chart-wrapper">
+            <canvas id="forecastChart"></canvas>
+          </div>
+        </div>
+
+        <!-- Forecast table -->
+        <div class="table-card">
+          <div class="table-card-header">Weekly Breakdown</div>
+          <div class="table-scroll">
+            <table class="data-table" id="forecastTable">
+              <thead>
+                <tr>
+                  <th>Week</th>
+                  <th>Date</th>
+                  <th>Forecasted Sales</th>
+                  <th>vs Prior Week</th>
+                </tr>
+              </thead>
+              <tbody id="forecastTableBody"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- Empty state -->
+      <div class="empty-state" id="forecastEmpty">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+          <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/>
+        </svg>
+        <p>Select a state above and click <strong>Run Forecast</strong></p>
+      </div>
+
+      <!-- Loading overlay -->
+      <div class="loading-overlay hidden" id="forecastLoading">
+        <div class="spinner"></div>
+        <span>Generating forecast…</span>
+      </div>
+    </section>
+
+    <!-- ── TAB: MODELS ──────────────────────────────── -->
+    <section class="tab-pane" id="tab-models">
+      <div class="section-header">
+        <h2 class="section-title">Model Performance by State</h2>
+        <div class="filter-group" id="modelFilterGroup">
+          <button class="filter-btn active" data-filter="all">All</button>
+          <button class="filter-btn" data-filter="XGBoost">XGBoost</button>
+          <button class="filter-btn" data-filter="ARIMA">ARIMA</button>
+          <button class="filter-btn" data-filter="Prophet">Prophet</button>
+          <button class="filter-btn" data-filter="LSTM">LSTM</button>
+        </div>
+      </div>
+
+      <!-- Win distribution bar -->
+      <div class="win-distribution" id="winDistribution"></div>
+
+      <!-- Models table -->
+      <div class="table-card">
+        <div class="table-scroll">
+          <table class="data-table" id="modelsTable">
+            <thead>
+              <tr>
+                <th class="sortable" data-col="state">State <span class="sort-icon">↕</span></th>
+                <th class="sortable" data-col="best_model">Best Model <span class="sort-icon">↕</span></th>
+                <th class="sortable" data-col="mape">MAPE % <span class="sort-icon">↕</span></th>
+                <th>ARIMA MAPE</th>
+                <th>Prophet MAPE</th>
+                <th>XGBoost MAPE</th>
+                <th>LSTM MAPE</th>
+              </tr>
+            </thead>
+            <tbody id="modelsTableBody">
+              <tr><td colspan="7" class="table-loading">Loading…</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── TAB: LIVE FORECAST ──────────────────────── -->
+    <section class="tab-pane" id="tab-live">
+      <div class="live-layout">
+        <!-- Form panel -->
+        <div class="live-form-panel">
+          <h2 class="section-title">Live Forecast</h2>
+          <p class="section-desc">
+            Provide your own historical weekly sales data (minimum 30 values, oldest first) and the API will run the best model for that state in real time.
+          </p>
+
+          <div class="form-group">
+            <label for="liveState">State</label>
+            <div class="custom-select">
+              <select id="liveState">
+                <option value="">— choose a state —</option>
+              </select>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <polyline points="6 9 12 15 18 9"/>
+              </svg>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="liveData">
+              Historical Weekly Sales
+              <span class="label-hint">comma-separated, oldest → newest</span>
+            </label>
+            <textarea
+              id="liveData"
+              rows="6"
+              placeholder="e.g. 210000000, 215000000, 218000000, …"
+              spellcheck="false"
+            ></textarea>
+            <div class="field-meta">
+              <span class="field-count" id="liveDataCount">0 values entered</span>
+              <span class="field-req">Minimum 30 required</span>
+            </div>
+          </div>
+
+          <div class="form-actions">
+            <button class="btn btn--ghost" id="loadSampleBtn">Load Sample Data</button>
+            <button class="btn btn--primary" id="runLiveBtn" disabled>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/>
+              </svg>
+              Run Live Forecast
+            </button>
+          </div>
+
+          <div class="live-error hidden" id="liveError"></div>
+        </div>
+
+        <!-- Result panel -->
+        <div class="live-result-panel" id="liveResultPanel">
+          <!-- empty state -->
+          <div class="empty-state" id="liveEmpty">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+              <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/>
+            </svg>
+            <p>Results will appear here</p>
+          </div>
+
+          <!-- loading -->
+          <div class="loading-overlay hidden" id="liveLoading">
+            <div class="spinner"></div>
+            <span>Running inference…</span>
+          </div>
+
+          <!-- result -->
+          <div class="live-result hidden" id="liveResult">
+            <div class="result-header">
+              <div class="result-title-block">
+                <h2 class="result-state" id="liveResultState">—</h2>
+                <span class="model-badge" id="liveResultModelBadge">—</span>
+              </div>
+              <div class="mape-chip" data-tooltip="Mean Absolute Percentage Error — how far off forecasts are on average. Lower is better. Under 5% is considered excellent.">
+                <span class="mape-label">MAPE <span class="info-icon">?</span></span>
+                <span class="mape-value" id="liveResultMape">—</span>
+              </div>
+            </div>
+
+            <div class="chart-card">
+              <div class="chart-card-header">
+                <span>8-Week Live Forecast</span>
+              </div>
+              <div class="chart-wrapper">
+                <canvas id="liveChart"></canvas>
+              </div>
+            </div>
+
+            <div class="table-card">
+              <div class="table-card-header">Weekly Breakdown</div>
+              <div class="table-scroll">
+                <table class="data-table">
+                  <thead>
+                    <tr>
+                      <th>Week</th>
+                      <th>Date</th>
+                      <th>Forecasted Sales</th>
+                      <th>vs Prior Week</th>
+                    </tr>
+                  </thead>
+                  <tbody id="liveTableBody"></tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <script src="app.js"></script>
+</body>
+</html>
